@@ -1,5 +1,5 @@
 # MinesweeperBoard Generator
-基于Python和NumPy实现的扫雷地图生成工具。
+基于Python和NumPy实现的扫雷地图生成工具。可自定义生成地图大小和雷数，计算对应数字，拥有地图展示功能。
 
 ## 更新日记
 ### 7月18日
