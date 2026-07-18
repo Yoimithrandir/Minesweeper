@@ -47,40 +47,29 @@ class MinesweeperBoard:
         self._num_of_mines=num_of_mines
 
     #随机选一定区域指定为雷
-    def place_mines(self):
+    def place_mines(self)->None:
         mines_array=np.random.choice(self.rows*self.columns,size=self.num_of_mines,replace=False)
-        for item in mines_array:
-            self.board[item//self.columns , item % self.columns]=-1
+        self.board.reshape(-1)[mines_array] = -1
     #计算雷附近的数字
     def calculate_numbers(self):
         direction=[(-1,-1),(-1,0),(-1,1),(0,-1),(0,1),(1,-1),(1,0),(1,1)]
-        for row in range(self.rows):
-            for column in range(self.columns):
-                if self.board[row,column]!=-1:
-                    continue
-                #给雷周围一圈的非雷区域计数+1
-                for dr,dc in direction:
-                    if (row+dr>=0 and row+dr<=self.rows-1) and (column+dc>=0 and column+dc<=self.columns-1):
-                        if self.board[row+dr,column+dc]==-1:
-                            continue #不用操作雷的区域
-                        else:
-                            self.board[row+dr,column+dc]+=1
+        mines_r,mines_c=np.where(self.board<0)
+        is_mine=(self.board==-1)
+        for dr,dc in direction:
+            new_r,new_c=mines_r+dr,mines_c+dc
+            valid=(new_r>=0) & (new_r<=self.rows-1) & (new_c>=0) & (new_c<=self.columns-1)
+            np.add.at(self.board,(new_r[valid],new_c[valid]),1)
+        
+        self.board[is_mine]=-1
     
     def generate(self):
         self.place_mines()
         self.calculate_numbers()
 
     def __str__(self):
-        result = ""
-        for row in self.board:
-            for item in row:
-                if item == -1:
-                    result += "*"
-                else:
-                    result += f"{item} "
-            result += "\n"
-        return result
-
+        str_board=self.board.astype(str)+' '
+        str_board[str_board=='-1 ']='* '
+        return '\n'.join(''.join(row) for row in str_board)
         
 My_Board=MinesweeperBoard(20,20,20)
 print(My_Board)
