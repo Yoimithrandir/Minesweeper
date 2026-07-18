@@ -1,3 +1,9 @@
-#MinesweeperBoard Generator
+# MinesweeperBoard Generator
 基于Python和NumPy实现的扫雷地图生成工具。
+
+## 更新日记
+### 7月18日
+实现了扫雷地图生成逻辑，包含随机数布雷，数字生成，地图显示逻辑
+### 7月19日
+更新了board.py，使用numpy优化了一些代码，去掉冗余的for循环
 
