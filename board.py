@@ -46,6 +46,9 @@ class MinesweeperBoard:
             raise ValueError("Too many mines for the board")
         self._num_of_mines=num_of_mines
 
+    @property
+    def shape(self):
+        return self.board.shape
     #随机选一定区域指定为雷
     def place_mines(self)->None:
         mines_array=np.random.choice(self.rows*self.columns,size=self.num_of_mines,replace=False)
