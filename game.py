@@ -12,12 +12,13 @@ class MinesweeperGame:
         self.board=board
         self.game_over=False
         self.direction=[(-1,-1),(-1,0),(-1,1),(0,-1),(0,1),(1,-1),(1,0),(1,1)]
+        self.win=False
 
     """
     主要两个函数，模拟左右键点击地图效果
     """
     #右键控制插旗
-    def mouse2(self, position:tuple)->None:          
+    def mouse3(self, position:tuple)->None:          
         if self._state[position]==HIDDEN:    #给隐藏格子插旗
             self._state[position]=FLAG
         elif self._state[position]==OPEN:    #对已翻开格子操作，无效操作
@@ -40,11 +41,11 @@ class MinesweeperGame:
     """
     其余工具函数，辅助判断
     """
-    #如果翻到雷，game_over
+    #如果翻到雷，更新game_over状态并返回
     def is_mine(self,position:tuple)->bool:
         if self.board.data[position]==-1:
             self.game_over=True
-        return self.board.board[position]==-1
+        return self.board.data[position]==-1
     
     #统计该位置周围旗数
     def flag_count(self,position):
@@ -62,7 +63,7 @@ class MinesweeperGame:
             if not self.is_valid((new_r,new_c)): continue
 
             if self._state[new_r,new_c]==FLAG: continue    
-            elif self._state[position]==HIDDEN: self.open_cell(position)
+            elif self._state[new_r,new_c]==HIDDEN: self.open_cell((new_r,new_c))
 
 
     #翻到空格，会连续翻一片空白区域
@@ -82,8 +83,12 @@ class MinesweeperGame:
     
     #翻开单个隐藏格子，可能触发self.blank_expand()
     def open_cell(self,position:tuple)->None:
+        if self._state[position] == OPEN:
+            return
         self._state[position]=OPEN
-        self.is_mine(position)
+        if self.is_mine(position):
+            return
+
         if self.board.data[position]==0:   self.blank_expand(position)#翻到空格,额外展开周围一片非雷空白区域
     
     #检查当前位置是否越界
@@ -106,6 +111,15 @@ class MinesweeperGame:
 
         print('\n'.join(' '.join(row) for row in str_board))
 
+    #胜利判断
+    def check_win(self):
+        safe_cell=self.board.data!=-1
+        opened_cell=self._state==OPEN
+        if np.all(safe_cell==opened_cell):       #非雷区域全部翻开
+            self.win=True
+
+        return self.win 
+
 
 
 if __name__=="__main__":
@@ -121,12 +135,12 @@ if __name__=="__main__":
     print("点击(0,0):")
     game.show_state()
 
-    game.mouse2((5,2))
+    game.mouse3((5,2))
     print("插旗(5,2):")
     game.show_state()
 
-    game.mouse1((2,2))
-    print("点击(3,1):")
+    game.mouse1((5,1))
+    print("点击(5,1):")
     game.show_state()
 
     print("game over:",game.game_over)
